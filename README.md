@@ -1,1 +1,1 @@
-# Blog_Capstone_Project_with_Flask_Authentication
+# Blog Capstone Project with Flask Authentication
