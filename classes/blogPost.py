@@ -1,14 +1,14 @@
 from flask_sqlalchemy import SQLAlchemy
 
-db = SQLAlchemy()
+Blog_db = SQLAlchemy()
 
 # Blog Post Class
-class BlogPost(db.Model):
+class BlogPost(Blog_db.Model):
     __tablename__ = "blog_posts"
-    id = db.Column(db.Integer, primary_key=True)
-    author = db.Column(db.String(250), nullable=False)
-    title = db.Column(db.String(250), unique=True, nullable=False)
-    subtitle = db.Column(db.String(250), nullable=False)
-    date = db.Column(db.String(250), nullable=False)
-    body = db.Column(db.Text, nullable=False)
-    img_url = db.Column(db.String(250), nullable=False)
+    id = Blog_db.Column(Blog_db.Integer, primary_key=True)
+    author = Blog_db.Column(Blog_db.String(250), nullable=False)
+    title = Blog_db.Column(Blog_db.String(250), unique=True, nullable=False)
+    subtitle = Blog_db.Column(Blog_db.String(250), nullable=False)
+    date = Blog_db.Column(Blog_db.String(250), nullable=False)
+    body = Blog_db.Column(Blog_db.Text, nullable=False)
+    img_url = Blog_db.Column(Blog_db.String(250), nullable=False)
