@@ -4,11 +4,14 @@ from flask_ckeditor import CKEditor
 from datetime import date
 from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy.orm import relationship
-from flask_login import UserMixin, login_user, LoginManager, login_required, current_user, logout_user
+from flask_login import login_user, login_required, current_user, logout_user
 from flask_gravatar import Gravatar
 # My Files (Classes)
 from classes.forms import CreatePostForm
-from classes.blogPost import BlogPost, db
+from classes.blogPost import BlogPost, Blog_db
+from classes.user_class import User, User_db
+# My Files (Functions)
+from Functions.user_load_func import login_Manager, load_user
 
 # Init Flask App
 app = Flask(__name__)
@@ -17,11 +20,16 @@ ckeditor = CKEditor(app)
 Bootstrap(app)
 
 # CONNECT TO DB
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///blog.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///blog.db' # DB to store blog posts
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db' # DB to store registered users
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-# Init the Flask App with SQL DB
-db.init_app(app)
 
+# Init the Flask App with SQL DBs
+Blog_db.init_app(app) # Blog DB
+User_db.init_app(app) # User DB
+
+# Init the Flask App with Login Manager
+login_Manager.init_app(app)
 
 # Home Route
 @app.route('/')
