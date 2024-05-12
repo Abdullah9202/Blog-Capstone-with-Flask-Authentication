@@ -5,11 +5,10 @@ from datetime import date
 from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy.orm import relationship
 from flask_login import login_user, login_required, current_user, logout_user
-from flask_gravatar import Gravatar
 # My Files (Classes)
 from classes.forms import CreatePostForm
-from classes.blogPost import BlogPost, Blog_db
-from classes.user_class import User, User_db
+from classes.blogPost import BlogPost
+from classes.user_class import User, RegisterForm, db
 # My Files (Functions)
 from Functions.user_load_func import login_Manager, load_user
 
@@ -21,12 +20,10 @@ Bootstrap(app)
 
 # CONNECT TO DB
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///blog.db' # DB to store blog posts
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db' # DB to store registered users
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-# Init the Flask App with SQL DBs
-Blog_db.init_app(app) # Blog DB
-User_db.init_app(app) # User DB
+# Init the Flask App with SQL DB
+db.init_app(app) # Blog DB
 
 # Init the Flask App with Login Manager
 login_Manager.init_app(app)
@@ -41,7 +38,8 @@ def get_all_posts():
 # Register Route
 @app.route('/register')
 def register():
-    return render_template("register.html")
+    form = RegisterForm()
+    return render_template("register.html", form=form)
 
 
 # Login Route
@@ -53,6 +51,7 @@ def login():
 # Logout Route
 @app.route('/logout')
 def logout():
+    logout_user()
     return redirect(url_for('get_all_posts'))
 
 
@@ -79,6 +78,7 @@ def show_post(post_id):
 @app.route("/new-post")
 def add_new_post():
     form = CreatePostForm()
+    # Validating the form
     if form.validate_on_submit():
         new_post = BlogPost(
             title=form.title.data,
@@ -88,8 +88,9 @@ def add_new_post():
             author=current_user,
             date=date.today().strftime("%B %d, %Y")
         )
-        Blog_db.session.add(new_post)
-        Blog_db.session.commit()
+        # Adding the post in DB
+        db.session.add(new_post)
+        db.session.commit()
         return redirect(url_for("get_all_posts"))
     return render_template("make-post.html", form=form)
 
@@ -114,7 +115,7 @@ def edit_post(post_id):
         post.author = edit_form.author.data
         post.body = edit_form.body.data
         # Commiting in DB
-        Blog_db.session.commit()
+        db.session.commit()
         return redirect(url_for("show_post", post_id=post.id))
 
     return render_template("make-post.html", form=edit_form)
@@ -123,9 +124,11 @@ def edit_post(post_id):
 # Delete Post Route
 @app.route("/delete/<int:post_id>")
 def delete_post(post_id):
+    # Getting the targeted post form DB
     post_to_delete = BlogPost.query.get(post_id)
-    Blog_db.session.delete(post_to_delete)
-    Blog_db.session.commit()
+    # Deleting and commiting
+    db.session.delete(post_to_delete)
+    db.session.commit()
     return redirect(url_for('get_all_posts'))
 
 
@@ -133,6 +136,5 @@ def delete_post(post_id):
 if __name__ == "__main__":
     # Creating a database with app context
     with app.app_context():
-        Blog_db.create_all()
-        User_db.create_all()
+        db.create_all()
     app.run(host='127.0.0.1', port=5000)
