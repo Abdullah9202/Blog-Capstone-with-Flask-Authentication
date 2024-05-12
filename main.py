@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, url_for, flash
+from flask import Flask, render_template, redirect, request, url_for, flash
 from flask_bootstrap import Bootstrap
 from flask_ckeditor import CKEditor
 from datetime import date
@@ -36,9 +36,28 @@ def get_all_posts():
 
 
 # Register Route
-@app.route('/register')
+@app.route('/register', methods=["GET", "POST"])
 def register():
     form = RegisterForm()
+    # Validation for request method
+    if request.method == "POST" and form.validate_on_submit():
+        # Getting the hased and salted password
+        hashed_Salted_Password = generate_password_hash(form.password.data, method="pbkdf2:sha256", salt_length=8)
+        # Registering the new user
+        new_user = User(
+                name=form.name.data,
+                email=form.email.data,
+                password=hashed_Salted_Password, # Hashed and Salted Password Added in DB
+            )
+        # Validation for Email
+        if User.query.filter_by(email=new_user.email).first() is None:
+            # Commiting and Adding in DB
+            db.session.add(new_user)
+            db.session.commit()
+            # Returning to main page in case of success
+            return redirect(url_for("get_all_posts"))
+        else:
+            flash("This email is already registered", "error")
     return render_template("register.html", form=form)
 
 
