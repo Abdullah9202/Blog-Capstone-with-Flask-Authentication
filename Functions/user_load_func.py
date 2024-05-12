@@ -1,6 +1,6 @@
 from flask_login import LoginManager
 # My Files (Classes)
-from classes.user_class import User_db, User
+from classes.user_class import db, User
 
 login_Manager = LoginManager()
 
