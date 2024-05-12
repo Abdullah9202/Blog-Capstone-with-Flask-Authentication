@@ -56,13 +56,6 @@ def logout():
     return redirect(url_for('get_all_posts'))
 
 
-# Show Post Route
-@app.route("/post/<int:post_id>")
-def show_post(post_id):
-    requested_post = BlogPost.query.get(post_id)
-    return render_template("post.html", post=requested_post)
-
-
 # About Route
 @app.route("/about")
 def about():
@@ -73,6 +66,13 @@ def about():
 @app.route("/contact")
 def contact():
     return render_template("contact.html")
+
+
+# Show Post Route
+@app.route("/post/<int:post_id>")
+def show_post(post_id):
+    requested_post = BlogPost.query.get(post_id)
+    return render_template("post.html", post=requested_post)
 
 
 # New Post Route
@@ -88,8 +88,8 @@ def add_new_post():
             author=current_user,
             date=date.today().strftime("%B %d, %Y")
         )
-        db.session.add(new_post)
-        db.session.commit()
+        Blog_db.session.add(new_post)
+        Blog_db.session.commit()
         return redirect(url_for("get_all_posts"))
     return render_template("make-post.html", form=form)
 
@@ -98,6 +98,7 @@ def add_new_post():
 @app.route("/edit-post/<int:post_id>")
 def edit_post(post_id):
     post = BlogPost.query.get(post_id)
+    # Displaying the info in form
     edit_form = CreatePostForm(
         title=post.title,
         subtitle=post.subtitle,
@@ -105,13 +106,15 @@ def edit_post(post_id):
         author=post.author,
         body=post.body
     )
+    # Validating the form
     if edit_form.validate_on_submit():
         post.title = edit_form.title.data
         post.subtitle = edit_form.subtitle.data
         post.img_url = edit_form.img_url.data
         post.author = edit_form.author.data
         post.body = edit_form.body.data
-        db.session.commit()
+        # Commiting in DB
+        Blog_db.session.commit()
         return redirect(url_for("show_post", post_id=post.id))
 
     return render_template("make-post.html", form=edit_form)
@@ -121,8 +124,8 @@ def edit_post(post_id):
 @app.route("/delete/<int:post_id>")
 def delete_post(post_id):
     post_to_delete = BlogPost.query.get(post_id)
-    db.session.delete(post_to_delete)
-    db.session.commit()
+    Blog_db.session.delete(post_to_delete)
+    Blog_db.session.commit()
     return redirect(url_for('get_all_posts'))
 
 
@@ -130,5 +133,6 @@ def delete_post(post_id):
 if __name__ == "__main__":
     # Creating a database with app context
     with app.app_context():
-        db.create_all()
+        Blog_db.create_all()
+        User_db.create_all()
     app.run(host='127.0.0.1', port=5000)
