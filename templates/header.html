@@ -36,16 +36,16 @@
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('get_all_posts') }}">Home</a>
                     </li>
-                    {% if is_loggedIn %} {# Showing logout button if user if already logged in #}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('logout') }}">Log Out</a>
-                        </li>
-                    {% else %} {# Showing the login and register Button if user is not logged in #}
+                    {% if not loggedIn: %} {# Showing the login and register Button if user is not logged in #}
                         <li class="nav-item">
                             <a class="nav-link" href="{{ url_for('login') }}">Login</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="{{ url_for('register') }}">Register</a>
+                        </li>    
+                    {% else %} {# Showing logout button if user if already logged in #}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('logout') }}">Log Out</a>
                         </li>
                     {% endif %}
                     <li class="nav-item">
