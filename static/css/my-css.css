@@ -1,4 +1,5 @@
 div .flash_msg div {
     font-size: large;
-    color: white;
+    color: red;
+    font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
