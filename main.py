@@ -8,7 +8,7 @@ from flask_login import login_user, login_required, current_user, logout_user
 # My Files (Classes)
 from classes.forms import CreatePostForm
 from classes.blogPost import BlogPost
-from classes.user_class import User, RegisterForm, db
+from classes.user_class import User, RegisterForm, LoginForm, db
 # My Files (Functions)
 from Functions.user_load_func import login_Manager, load_user
 
@@ -62,9 +62,27 @@ def register():
 
 
 # Login Route
-@app.route('/login')
+@app.route('/login', methods=["GET", "POST"])
 def login():
-    return render_template("login.html")
+    form = LoginForm()
+    # Validation for form
+    if form.validate_on_submit() and request.method == "POST":
+        # Getting the user details from the HTTP request
+        email = form.email.data
+        password = form.password.data
+        # Getting the user from DB by email
+        user = User.query.filter_by(email=email).first()
+        # Validation for user
+        if user:
+            # Checking the password
+            if check_password_hash(pwhash=user.password, password=password):
+                login_user(user)
+                flash("You have logged in.", "Success")
+            else:
+                flash("Incorrect email or password.", "error")
+        else:
+            flash("The user with this email does not exist. Register first!", "error")
+    return render_template("login.html", form=form)
 
 
 # Logout Route
