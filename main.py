@@ -11,6 +11,7 @@ from classes.blogPost import BlogPost
 from classes.user_class import User, RegisterForm, LoginForm, db
 # My Files (Functions)
 from Functions.user_load_func import login_Manager, load_user
+from Functions.restricted_access import admin_only
 
 # Init Flask App
 app = Flask(__name__)
@@ -114,6 +115,7 @@ def show_post(post_id):
 
 # New Post Route
 @app.route("/new-post")
+@admin_only # Restricted to admin only
 def add_new_post():
     form = CreatePostForm()
     # Validating the form
@@ -135,6 +137,7 @@ def add_new_post():
 
 # Edit Post Route
 @app.route("/edit-post/<int:post_id>")
+@admin_only # Restricted to admin only
 def edit_post(post_id):
     post = BlogPost.query.get(post_id)
     # Displaying the info in form
@@ -161,6 +164,7 @@ def edit_post(post_id):
 
 # Delete Post Route
 @app.route("/delete/<int:post_id>")
+@admin_only # Restricted to admin only
 def delete_post(post_id):
     # Getting the targeted post form DB
     post_to_delete = BlogPost.query.get(post_id)
