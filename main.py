@@ -58,7 +58,7 @@ def register():
             return redirect(url_for("get_all_posts"))
         else:
             flash("This email is already registered", "error")
-    return render_template("register.html", form=form)
+    return render_template("register.html", form=form, is_loggedIn=True)
 
 
 # Login Route
@@ -77,12 +77,12 @@ def login():
             # Checking the password
             if check_password_hash(pwhash=user.password, password=password):
                 login_user(user)
-                flash("You have logged in.", "Success")
+                return redirect(url_for("get_all_posts"))
             else:
                 flash("Incorrect email or password.", "error")
         else:
             flash("The user with this email does not exist. Register first!", "error")
-    return render_template("login.html", form=form)
+    return render_template("login.html", form=form, is_loggedIn=True)
 
 
 # Logout Route
