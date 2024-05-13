@@ -32,7 +32,7 @@ login_Manager.init_app(app)
 @app.route('/')
 def get_all_posts():
     posts = BlogPost.query.all()
-    return render_template("index.html", all_posts=posts)
+    return render_template("index.html", all_posts=posts, loggedIn=current_user.is_authenticated)
 
 
 # Register Route
@@ -57,8 +57,9 @@ def register():
             # Returning to main page in case of success
             return redirect(url_for("get_all_posts"))
         else:
-            flash("This email is already registered", "error")
-    return render_template("register.html", form=form, is_loggedIn=True)
+            flash("This email is already registered, Login instead.", "error")
+            return redirect(url_for("login"))
+    return render_template("register.html", form=form, loggedIn=current_user.is_authenticated)
 
 
 # Login Route
@@ -79,10 +80,10 @@ def login():
                 login_user(user)
                 return redirect(url_for("get_all_posts"))
             else:
-                flash("Incorrect email or password.", "error")
+                flash("Incorrect password, please try again.", "error")
         else:
-            flash("The user with this email does not exist. Register first!", "error")
-    return render_template("login.html", form=form, is_loggedIn=True)
+            flash("That email does not exist, plesae try again.", "error")
+    return render_template("login.html", form=form, loggedIn=current_user.is_authenticated)
 
 
 # Logout Route
