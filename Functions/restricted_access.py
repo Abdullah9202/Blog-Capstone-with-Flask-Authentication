@@ -1,7 +1,7 @@
 from functools import wraps
 from flask import abort
 # My Files (main.py)
-from main import current_user
+from flask_login import current_user
 
 # Creating the admin access only function
 def admin_only(f):
