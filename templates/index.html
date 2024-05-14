@@ -33,12 +33,16 @@
                     Posted by
                     <a href="#">{{post.author}}</a>
                     on {{post.date}}
-                    <a href="{{url_for('delete_post', post_id=post.id) }}">✘</a>
+                    <br>
+                    {# Validation for user #}
+                    {% if loggedIn and user_id == 1 %}
+                        <a id="delete_btn" href="{{url_for('delete_post', post_id=post.id) }}">Delete Post</a>
+                    {% endif %}
                 </p>
             </div>
             <hr>
             {% endfor %}
-            <!-- Validation for admin -->
+            {# Validation for admin #}
             {% if loggedIn and user_id == 1: %}
                 <!-- New Post -->
                 <div class="clearfix">
