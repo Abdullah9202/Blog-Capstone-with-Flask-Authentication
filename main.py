@@ -33,11 +33,17 @@ login_Manager.init_app(app)
 @app.route('/')
 def get_all_posts():
     posts = BlogPost.query.all()
-    # Getting the id of current user
+    # Getting the id and login status of current user
     id = None
+    login_status = None
+    # Validating the current user status
     if current_user.is_authenticated:
         id = current_user.id
-    return render_template("index.html", all_posts=posts, loggedIn=current_user.is_authenticated, user_id=id)
+        login_status = True
+    else:
+        id = None
+        login_status = False
+    return render_template("index.html", all_posts=posts, loggedIn=login_status, user_id=id)
 
 
 # Register Route
@@ -113,8 +119,19 @@ def contact():
 # Show Post Route
 @app.route("/post/<int:post_id>")
 def show_post(post_id):
+    id = None
+    login_Status = None
+    # Validating the user
+    if current_user.is_authenticated: 
+        # Getting the user's ID
+        id = current_user.id
+        login_Status = True
+    else:
+        id = None
+        login_Status = False
+    # Showing the requested post
     requested_post = requested_post = BlogPost.query.get(post_id)
-    return render_template("post.html", post=requested_post)
+    return render_template("post.html", post=requested_post, loggedIn=login_Status, user_id=id) # User will be authenticated on post.html page
 
 
 # New Post Route
@@ -198,4 +215,4 @@ if __name__ == "__main__":
     # Creating a database with app context
     with app.app_context():
         db.create_all()
-    app.run(host='127.0.0.1', port=5000)
+    app.run(debug=True, host='127.0.0.1', port=5000)
