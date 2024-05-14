@@ -33,7 +33,11 @@ login_Manager.init_app(app)
 @app.route('/')
 def get_all_posts():
     posts = BlogPost.query.all()
-    return render_template("index.html", all_posts=posts, loggedIn=current_user.is_authenticated)
+    # Getting the id of current user
+    id = None
+    if current_user.is_authenticated:
+        id = current_user.id
+    return render_template("index.html", all_posts=posts, loggedIn=current_user.is_authenticated, user_id=id)
 
 
 # Register Route
@@ -49,7 +53,7 @@ def register():
                 name=form.name.data,
                 email=form.email.data,
                 password=hashed_Salted_Password, # Hashed and Salted Password Added in DB
-            )
+        )
         # Validation for Email
         if User.query.filter_by(email=new_user.email).first() is None:
             # Commiting and Adding in DB
@@ -109,62 +113,77 @@ def contact():
 # Show Post Route
 @app.route("/post/<int:post_id>")
 def show_post(post_id):
-    requested_post = BlogPost.query.get(post_id)
+    requested_post = requested_post = BlogPost.query.get(post_id)
     return render_template("post.html", post=requested_post)
 
 
 # New Post Route
-@app.route("/new-post")
+@app.route("/new-post", methods=["GET", "POST"])
 @admin_only # Restricted to admin only
+@login_required
 def add_new_post():
     form = CreatePostForm()
-    # Validating the form
-    if form.validate_on_submit():
-        new_post = BlogPost(
-            title=form.title.data,
-            subtitle=form.subtitle.data,
-            body=form.body.data,
-            img_url=form.img_url.data,
-            author=current_user,
-            date=date.today().strftime("%B %d, %Y")
-        )
-        # Adding the post in DB
-        db.session.add(new_post)
-        db.session.commit()
-        return redirect(url_for("get_all_posts"))
+    # Validating the request method
+    if request.method == "POST":
+        # Validating the user
+        if current_user.is_authenticated and current_user.id == 1:
+            # Validating the form
+            if form.validate_on_submit():
+                # Creating the post
+                new_post = BlogPost(
+                    title=form.title.data,
+                    subtitle=form.subtitle.data,
+                    body=form.body.data,
+                    img_url=form.img_url.data,
+                    author=current_user.name,
+                    date=date.today().strftime("%B %d, %Y")
+                )
+                # Adding the post in DB
+                db.session.add(new_post)
+                db.session.commit()
+                return redirect(url_for("get_all_posts"))
+            else:
+                flash("Error submitting the form, Try again.", "error")
+                return redirect(url_for("add_new_post"))
+        else:
+            flash("Access Denied", "error")
+            return redirect(url_for("get_all_posts"))    
     return render_template("make-post.html", form=form)
 
 
 # Edit Post Route
-@app.route("/edit-post/<int:post_id>")
+@app.route("/edit-post/<int:post_id>", methods=["GET", "POST"])
 @admin_only # Restricted to admin only
+@login_required
 def edit_post(post_id):
-    post = BlogPost.query.get(post_id)
-    # Displaying the info in form
-    edit_form = CreatePostForm(
-        title=post.title,
-        subtitle=post.subtitle,
-        img_url=post.img_url,
-        author=post.author,
-        body=post.body
-    )
-    # Validating the form
-    if edit_form.validate_on_submit():
-        post.title = edit_form.title.data
-        post.subtitle = edit_form.subtitle.data
-        post.img_url = edit_form.img_url.data
-        post.author = edit_form.author.data
-        post.body = edit_form.body.data
-        # Commiting in DB
-        db.session.commit()
-        return redirect(url_for("show_post", post_id=post.id))
-
+    # Validation for request method
+    if request.method == "POST" and current_user.is_authenticated and current_user.id == 1:
+        post = BlogPost.query.get(post_id)
+        # Displaying the info in form
+        edit_form = CreatePostForm(
+            title=post.title,
+            subtitle=post.subtitle,
+            img_url=post.img_url,
+            author=post.author,
+            body=post.body
+        )
+        # Validating the form
+        if edit_form.validate_on_submit():
+            post.title = edit_form.title.data
+            post.subtitle = edit_form.subtitle.data
+            post.img_url = edit_form.img_url.data
+            post.author = edit_form.author.data
+            post.body = edit_form.body.data
+            # Commiting in DB
+            db.session.commit()
+            return redirect(url_for("show_post", post_id=post.id))
     return render_template("make-post.html", form=edit_form)
 
 
 # Delete Post Route
 @app.route("/delete/<int:post_id>")
 @admin_only # Restricted to admin only
+@login_required
 def delete_post(post_id):
     # Getting the targeted post form DB
     post_to_delete = BlogPost.query.get(post_id)
