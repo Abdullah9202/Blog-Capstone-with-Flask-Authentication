@@ -38,11 +38,14 @@
             </div>
             <hr>
             {% endfor %}
-
-            <!-- New Post -->
-            <div class="clearfix">
-                <a class="btn btn-primary float-right" href="{{url_for('add_new_post')}}">Create New Post</a>
-            </div>
+            <!-- Validation for admin -->
+            {% if loggedIn and user_id == 1: %}
+                <!-- New Post -->
+                <div class="clearfix">
+                    <a class="btn btn-primary float-right" href="{{url_for('add_new_post')}}">Create New Post</a>
+                </div>
+            {% endif %}
+            
         </div>
     </div>
 </div>
