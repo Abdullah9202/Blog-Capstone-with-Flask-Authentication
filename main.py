@@ -3,7 +3,6 @@ from flask_bootstrap import Bootstrap
 from flask_ckeditor import CKEditor
 from datetime import date
 from werkzeug.security import generate_password_hash, check_password_hash
-from sqlalchemy.orm import relationship
 from flask_login import login_user, login_required, current_user, logout_user
 # My Files (Classes)
 from classes.forms import CreatePostForm
