@@ -19,7 +19,7 @@ ckeditor = CKEditor(app)
 Bootstrap(app)
 
 # CONNECT TO DB
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///blog.db' # DB to store blog posts
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///blog&users.db' # DB to store blog posts
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Init the Flask App with SQL DB
