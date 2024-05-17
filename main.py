@@ -152,6 +152,7 @@ def add_new_post():
                     body=form.body.data,
                     img_url=form.img_url.data,
                     author=current_user.name,
+                    author_rel=current_user, # Current user assigned to author_rel for author_id
                     date=date.today().strftime("%B %d, %Y")
                 )
                 # Adding the post in DB
