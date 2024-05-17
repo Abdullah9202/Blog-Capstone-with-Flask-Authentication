@@ -1,10 +1,7 @@
 from sqlalchemy import Column, Integer, String, ForeignKey
-from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import relationship
 # My Files (Classes)
-from classes.user_class import Base
-
-db = SQLAlchemy()
+from classes.user_class import Base, User, db
 
 # Blog Post Class
 class BlogPost(db.Model, Base):
@@ -14,7 +11,7 @@ class BlogPost(db.Model, Base):
     # Getting the author's ID
     author_id = db.Column(db.Integer, ForeignKey('users.id'), nullable=False)
     # Defining many to one relationship with user
-    author_rel = relationship("User", back_populates="posts")
+    author_rel = relationship("User", back_populates="posts_rel")
     title = db.Column(db.String(250), unique=True, nullable=False)
     subtitle = db.Column(db.String(250), nullable=False)
     date = db.Column(db.String(250), nullable=False)
