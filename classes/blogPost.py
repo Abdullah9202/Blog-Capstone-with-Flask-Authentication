@@ -1,7 +1,7 @@
 from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship
 # My Files (Classes)
-from classes.user_class import Base, User, db
+from classes.user_class import Base, db
 
 # Blog Post Class
 class BlogPost(db.Model, Base):
