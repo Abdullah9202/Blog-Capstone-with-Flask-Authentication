@@ -2,7 +2,6 @@ from flask_login import UserMixin
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, PasswordField
 from wtforms.validators import DataRequired, Email, URL
-from sqlalchemy import Column, Integer, String, ForeignKey
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
@@ -36,4 +35,4 @@ class User(UserMixin, db.Model, Base):
     email = db.Column(db.String(100), unique=True, nullable=False)
     password = db.Column(db.String(100), nullable=False)
     # Defining one to many relationships with posts
-    posts_rel = relationship("BlogPosts", back_populates="author")
+    posts_rel = relationship("BlogPost", back_populates="author_rel")
