@@ -173,27 +173,24 @@ def add_new_post():
 @admin_only # Restricted to admin only
 @login_required
 def edit_post(post_id):
-    edit_form = CreatePostForm()
-    # Validation for request method
-    if request.method == "POST" and current_user.is_authenticated and current_user.id == 1:
-        post = BlogPost.query.get(post_id)
-        # Displaying the info in form
-        edit_form = CreatePostForm(
-            title=post.title,
-            subtitle=post.subtitle,
-            img_url=post.img_url,
-            author=post.author,
-            body=post.body
-        )
-        # Validating the form
-        if edit_form.validate_on_submit():
-            post.title = edit_form.title.data
-            post.subtitle = edit_form.subtitle.data
-            post.img_url = edit_form.img_url.data
-            post.author = edit_form.author.data
-            post.body = edit_form.body.data
-            # Commiting in DB
-            db.session.commit()
+    post = BlogPost.query.get(post_id)
+    # Displaying the info in form
+    edit_form = CreatePostForm(
+        title=post.title,
+        subtitle=post.subtitle,
+        img_url=post.img_url,
+        author=post.author,
+        body=post.body
+    )
+    # Validating the form
+    if edit_form.validate_on_submit():
+        post.title = edit_form.title.data
+        post.subtitle = edit_form.subtitle.data
+        post.img_url = edit_form.img_url.data
+        post.author = edit_form.author.data
+        post.body = edit_form.body.data
+        # Commiting in DB
+        db.session.commit()
         return redirect(url_for("show_post", post_id=post.id))
     return render_template("make-post.html", form=edit_form)
 
