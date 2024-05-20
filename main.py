@@ -173,6 +173,7 @@ def add_new_post():
 @admin_only # Restricted to admin only
 @login_required
 def edit_post(post_id):
+    edit_form = CreatePostForm()
     # Validation for request method
     if request.method == "POST" and current_user.is_authenticated and current_user.id == 1:
         post = BlogPost.query.get(post_id)
@@ -193,7 +194,7 @@ def edit_post(post_id):
             post.body = edit_form.body.data
             # Commiting in DB
             db.session.commit()
-            return redirect(url_for("show_post", post_id=post.id))
+        return redirect(url_for("show_post", post_id=post.id))
     return render_template("make-post.html", form=edit_form)
 
 
