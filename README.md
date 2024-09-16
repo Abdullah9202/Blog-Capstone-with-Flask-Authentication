@@ -27,7 +27,7 @@ This web application, built using Flask, allows users to create, edit, and delet
 1. **Clone the repository:**
 
     ```bash
-    git clone https://github.com/your_username/your_repository.git
+    git clone https://github.com/Abdullah9202/Blog-Capstone-with-Flask-Authentication.git
     ```
 
 2. **Install dependencies:**
